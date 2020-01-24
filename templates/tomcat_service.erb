@@ -1,0 +1,29 @@
+# Systemd unit file for tomcat
+#This file is maintained by Puppet, any changes to this file will be reverted after 15 minutes
+[Unit]
+Description=Tomcat Apache Topicmanager Project
+After=syslog.target network.target
+
+[Service]
+Type=forking
+
+Environment=JAVA_HOME=<%= scope.lookupvar("topicmanager::params::jdk_path") %>/current
+Environment=CATALINA_PID=/data/tomcat/temp/tomcat.pid
+Environment=CATALINA_HOME=/data/tomcat/current-topicmanager-test/
+Environment=CATALINA_BASE=/data/tomcat/current-topicmanager-test/
+Environment=CATALINA_OPTS="<%= scope.lookupvar("topicmanager::params::java_opts") %>"
+
+
+ExecStart=<%= scope.lookupvar("topicmanager::params::topicmanager_service_path") %>/bin/startup.sh
+ExecStop=<%= scope.lookupvar("topicmanager::params::topicmanager_service_path") %>/bin/shutdown.sh
+
+User=<%= scope.lookupvar("topicmanager::params::user") %>
+Group=<%= scope.lookupvar("topicmanager::params::group") %>
+UMask=0007
+RestartSec=10
+Restart=always
+LimitNOFILE=150000
+
+
+[Install]
+WantedBy=multi-user.target
